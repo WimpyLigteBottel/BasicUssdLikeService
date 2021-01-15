@@ -3,11 +3,10 @@ package nel.marco.controller;
 
 import nel.marco.manager.SessionManager;
 import nel.marco.manager.StepManager;
+import nel.marco.model.Request;
 import nel.marco.model.Response;
 import nel.marco.model.Session;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,29 +23,16 @@ public class UssdRestController {
         this.sessionStepManager = sessionStepManager;
     }
 
+    @PostMapping("/ussd")
+    public Response ussdRequest(@RequestBody Request request) {
 
-    /*
-    TODO: change this to post request (as spec requires)
-
-    {
-    "sessionId": "#AA1234",
-    "msisdn": "27821231234",
-    "userEntry": "1"
-    }
-
-     */
-    @GetMapping("/ussd")
-    public Response ussdRequest(@RequestParam(required = true) String sessionId,
-                                @RequestParam(required = true) String msisdn,
-                                @RequestParam(required = false, defaultValue = "") String userEntry) {
-
-        boolean hasNoSession = sessionManager.getSessionInfo(sessionId).isEmpty();
+        boolean hasNoSession = sessionManager.getSessionInfo(request.getSessionId()).isEmpty();
 
         if (hasNoSession) {
-            return initialEntry(sessionId, msisdn);
+            return initialEntry(request);
         }
 
-        return determineSession(sessionId, msisdn, userEntry);
+        return determineSession(request);
     }
 
 
@@ -57,18 +43,18 @@ public class UssdRestController {
     }
 
 
-    private Response initialEntry(String sessionId, String msisdn) {
+    private Response initialEntry(Request request) {
         int currentStep = sessionStepManager.determineCurrentStep(new ArrayList<>());
-        sessionManager.createSession(sessionId, msisdn);
-        Session latestSession = sessionManager.getLatestSession(sessionId);
+        sessionManager.createSession(request.getSessionId(), request.getMsisdn());
+        Session latestSession = sessionManager.getLatestSession(request.getSessionId());
 
         return sessionStepManager.handleStep(currentStep, latestSession);
 
     }
 
-    private Response determineSession(String sessionId, String msisdn, String entry) {
-        sessionManager.addSession(sessionId, msisdn, entry);
-        List<Session> sessionInfo = sessionManager.getSessionInfo(sessionId);
+    private Response determineSession(Request request) {
+        sessionManager.addSession(request.getSessionId(), request.getMsisdn(), request.getUserEntry());
+        List<Session> sessionInfo = sessionManager.getSessionInfo(request.getSessionId());
 
         int currentStep = sessionStepManager.determineCurrentStep(sessionInfo);
         Session latestSession = sessionManager.getLatestSession(sessionInfo);

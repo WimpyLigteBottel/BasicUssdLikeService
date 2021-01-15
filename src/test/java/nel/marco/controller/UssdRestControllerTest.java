@@ -2,6 +2,7 @@ package nel.marco.controller;
 
 import nel.marco.manager.SessionManager;
 import nel.marco.manager.StepManager;
+import nel.marco.model.Request;
 import nel.marco.model.Session;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,7 +35,7 @@ public class UssdRestControllerTest {
         when(sessionManager.getLatestSession(anyString())).thenReturn(new Session("asd", "asd"));
         when(sessionManager.getSessionInfo(anyString())).thenReturn(new ArrayList<>());
 
-        ussdRestController.ussdRequest("asd", "asd", "");
+        ussdRestController.ussdRequest(new Request("asd", "asd", ""));
 
 
         verify(sessionManager, times(1)).getSessionInfo(anyString());
