@@ -23,7 +23,7 @@ public class Session {
     Why  use optional ?
     Makes determining the if its empty easier and indicates clearly that it can be empty
     */
-    private Optional<String> userEntry;
+    private Optional<String> userEntry = Optional.empty();
 
     public Session(String sessionId, String msisdn) {
         this.sessionId = sessionId;

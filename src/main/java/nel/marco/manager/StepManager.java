@@ -3,6 +3,8 @@ package nel.marco.manager;
 import nel.marco.model.Response;
 import nel.marco.model.Session;
 import nel.marco.type.Country;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -12,6 +14,9 @@ import java.util.Optional;
 
 @Component
 public class StepManager {
+
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
 
     private final SessionManager sessionManager;
     private final StepInputValidator stepInputValidator;
@@ -23,14 +28,13 @@ public class StepManager {
         this.paymentManager = paymentManager;
     }
 
-    public int determineCurrentStep(List<Session> sessions) {
+    public int determineCurrentStep(String sessionId) {
+
+        List<Session> sessions = sessionManager.getSessionInfo(sessionId);
 
         if (sessions.isEmpty()) {
             return 1;
         }
-
-        String sessionId = sessions.get(0).getSessionId();
-
 
         switch (sessions.size()) {
             case 1:
@@ -39,7 +43,6 @@ public class StepManager {
                 if (stepInputValidator.isStep1Valid(sessions)) {
                     return 2;
                 }
-
                 sessionManager.removeSession(sessionId, 1);
                 return 1;
             case 3:
@@ -63,6 +66,7 @@ public class StepManager {
                 sessionManager.removeSession(sessionId, 4);
                 return 4;
             default:
+                logger.error("determineCurrentStep failed enter the default case [sessionId={}]", sessionId);
                 throw new RuntimeException("This should not have happened");
         }
 
@@ -71,7 +75,7 @@ public class StepManager {
 
     public Response handleStep(String sessionId) {
 
-        int stepNumber = determineCurrentStep(sessionManager.getSessionInfo(sessionId));
+        int stepNumber = determineCurrentStep(sessionId);
         Session session = sessionManager.getLatestSession(sessionId);
 
         String message;
@@ -79,7 +83,6 @@ public class StepManager {
 
         switch (stepNumber) {
             case 1:
-
                 /*
                 TODO: find a better way of display screens and adding options
                  */
@@ -112,7 +115,7 @@ public class StepManager {
                 Optional<String> moneyAmount = sessionManager.getSessionInfo(session.getSessionId()).get(2).getUserEntry();
 
                 if (!country.isPresent() || !moneyAmount.isPresent()) {
-                    throw new RuntimeException("Unable to find correct values in step 3]");
+                    throw new RuntimeException("Unable to find correct values in step 3");
                 }
 
                 BigDecimal randAmount = BigDecimal.valueOf(Double.parseDouble(moneyAmount.get()));

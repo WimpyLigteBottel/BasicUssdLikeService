@@ -1,9 +1,19 @@
 package nel.marco.model;
 
+import org.hibernate.validator.constraints.Length;
+
+import javax.validation.constraints.NotNull;
+
 public class Request {
 
+    @NotNull
     private String sessionId;
+
+    @Length(min = 10, max = 10)
+    @NotNull
     private String msisdn;
+
+    @Length(max = 100)
     private String userEntry;
 
 
