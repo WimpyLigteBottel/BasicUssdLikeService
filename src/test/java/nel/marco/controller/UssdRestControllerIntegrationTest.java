@@ -18,7 +18,7 @@ public class UssdRestControllerIntegrationTest {
 
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         MockitoAnnotations.openMocks(this);
 
         SessionManager sessionManager = new SessionManager();
@@ -36,8 +36,7 @@ public class UssdRestControllerIntegrationTest {
         Response actual = ussdRestController.ussdRequest(new Request(s, "test", ""));
 
 
-        //Don't like making referencing messages directly like this but its for testing purposes here
-        // because its makes test brittle
+        //Don't like making referencing messages directly (because its makes test brittle).
         assertThat(actual.getMessage()).isEqualTo("Welcome! Where would you like to send your money today!\n 1. Kenya \n 2.Malawi");
         assertThat(actual.getSessionId()).isEqualTo(s);
 
@@ -51,7 +50,7 @@ public class UssdRestControllerIntegrationTest {
         Response actual = ussdRestController.ussdRequest(new Request(s, "test", ""));
 
 
-        //Don't like making referencing messages directly like this but its for testing purposes here because its makes actual brittle
+        //Don't like making referencing messages directly (because its makes test brittle).
         assertThat(actual.getMessage()).isEqualTo("Welcome! Where would you like to send your money today!\n 1. Kenya \n 2.Malawi");
         assertThat(actual.getSessionId()).isEqualTo(s);
 
@@ -65,7 +64,7 @@ public class UssdRestControllerIntegrationTest {
         Response actual = ussdRestController.ussdRequest(new Request(s, "test", "1"));
 
 
-        //Don't like making referencing messages directly like this but its for testing purposes here because its makes actual brittle
+        //Don't like making referencing messages directly (because its makes test brittle).
         assertThat(actual.getMessage()).isEqualTo("How much money(in Rands) would like to send to KENYA?");
         assertThat(actual.getSessionId()).isEqualTo(s);
 
@@ -80,7 +79,7 @@ public class UssdRestControllerIntegrationTest {
         Response actual = ussdRestController.ussdRequest(new Request(s, "test", "100"));
 
 
-        //Don't like making referencing messages directly like this but its for testing purposes here because its makes actual brittle
+        //Don't like making referencing messages directly (because its makes test brittle).
         assertThat(actual.getMessage()).isEqualTo("Please enter the person cellphone number?\n Example: 0123456789");
         assertThat(actual.getSessionId()).isEqualTo(s);
 
@@ -96,7 +95,7 @@ public class UssdRestControllerIntegrationTest {
         Response actual = ussdRestController.ussdRequest(new Request(s, "test", "0123456789"));
 
 
-        //Don't like making referencing messages directly like this but its for testing purposes here because its makes actual brittle
+        //Don't like making referencing messages directly (because its makes test brittle).
         assertThat(actual.getMessage()).isEqualTo("The person your sending to will receive: 610.00 KES. \n 1. Ok");
         assertThat(actual.getSessionId()).isEqualTo(s);
 
@@ -113,7 +112,7 @@ public class UssdRestControllerIntegrationTest {
         Response actual = ussdRestController.ussdRequest(new Request(s, "test", "1"));
 
 
-        //Don't like making referencing messages directly like this but its for testing purposes here because its makes actual brittle
+        //Don't like making referencing messages directly (because its makes test brittle).
         assertThat(actual.getMessage()).isEqualTo("Thank you for using XYZ company!");
         assertThat(actual.getSessionId()).isEqualTo(s);
 
@@ -133,7 +132,7 @@ public class UssdRestControllerIntegrationTest {
         Response actual = ussdRestController.ussdRequest(new Request(s, "test", "1"));
 
 
-        //Don't like making referencing messages directly like this but its for testing purposes here because its makes actual brittle
+        //Don't like making referencing messages directly (because its makes test brittle).
         assertThat(actual.getMessage()).isEqualTo("Welcome! Where would you like to send your money today!\n 1. Kenya \n 2.Malawi");
         assertThat(actual.getSessionId()).isEqualTo(s);
 
@@ -146,7 +145,7 @@ public class UssdRestControllerIntegrationTest {
         String s = ussdRestController.requestSessionId();
         Response actual = ussdRestController.ussdRequest(new Request(s, "test", ""));
 
-        //Don't like making referencing messages directly like this but its for testing purposes here because its makes actual brittle
+        //Don't like making referencing messages directly (because its makes test brittle).
         assertThat(actual.getMessage()).isEqualTo("Welcome! Where would you like to send your money today!\n 1. Kenya \n 2.Malawi");
         assertThat(actual.getSessionId()).isEqualTo(s);
 
@@ -154,14 +153,14 @@ public class UssdRestControllerIntegrationTest {
         ussdRestController.ussdRequest(new Request(s, "test", "99"));
 
 
-        //Don't like making referencing messages directly like this but its for testing purposes here because its makes actual brittle
+        //Don't like making referencing messages directly (because its makes test brittle).
         assertThat(actual.getMessage()).isEqualTo("Welcome! Where would you like to send your money today!\n 1. Kenya \n 2.Malawi");
         assertThat(actual.getSessionId()).isEqualTo(s);
 
     }
 
     @Test
-    public void requestSessionId() {
+    public void requestSessionId_expectNonEmptyString() {
 
         String actual = ussdRestController.requestSessionId();
 

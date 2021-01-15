@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,7 +27,7 @@ public class UssdRestControllerTest {
     StepManager sessionStepManager;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         MockitoAnnotations.openMocks(this);
         ussdRestController = new UssdRestController(sessionManager, sessionStepManager);
     }
@@ -38,17 +39,18 @@ public class UssdRestControllerTest {
 
 
         verify(sessionManager, times(1)).createSession(anyString(), anyString());
-
         verify(sessionStepManager, times(1)).handleStep(anyString());
     }
 
     @Test
     public void ussdRequest_secondSession_expectMethodsToBeCalled() {
 
-        when(sessionManager.getSessionInfo(anyString())).thenReturn(List.of(new Session("asd","asd")));
+        List<Session> sessions = new ArrayList<>();
+        sessions.add(new Session("asd", "asd"));
+        when(sessionManager.getSessionInfo(anyString())).thenReturn(sessions);
+
 
         ussdRestController.ussdRequest(new Request("asd", "asd", "1"));
-
 
         verify(sessionManager, times(1)).addSession(anyString(), anyString(), anyString());
         verify(sessionStepManager, times(1)).handleStep(anyString());

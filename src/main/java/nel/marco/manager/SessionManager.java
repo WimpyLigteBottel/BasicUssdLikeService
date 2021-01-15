@@ -14,7 +14,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class SessionManager {
 
 
-    //TODO: this is not thread-safe i can make this feature in the future.
     //TODO: add feature that cleans up the usercache when its done or session hangs
     Map<String, List<Session>> userSessionCache = new ConcurrentHashMap<>();
 
@@ -50,9 +49,10 @@ public class SessionManager {
     public Session createSession(String sessionId, String msisdn) {
         Session session = new Session(sessionId, msisdn);
 
-        //I can add validation for the msisdn and sessionId but i am keeping it simple if need will implement it
-
-        userSessionCache.put(sessionId, new ArrayList<>(List.of(session)));
+        //I can add validation for the msisdn and sessionId but i am keeping it simple if needed I will implement it
+        List<Session> sessions = new ArrayList<>();
+        sessions.add(session);
+        userSessionCache.put(sessionId, sessions);
 
         return session;
     }

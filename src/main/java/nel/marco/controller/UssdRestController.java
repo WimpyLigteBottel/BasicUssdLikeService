@@ -21,7 +21,6 @@ public class UssdRestController {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-
     private SessionManager sessionManager;
     private StepManager sessionStepManager;
 
@@ -49,13 +48,11 @@ public class UssdRestController {
 
             sessionManager.clearSession(request.getSessionId());
 
-            //This could be handle by clearing the session and displaying default error screen
+            //This could be handle by clearing the session and displaying default error screen, i decided to keep it simple
             throw new RuntimeException("Could not handle request");
         }
     }
 
-
-    // This call will be used to request the session Id that will be used for the number
     @GetMapping("/requestSessionId")
     public String requestSessionId() {
         return UUID.randomUUID().toString();

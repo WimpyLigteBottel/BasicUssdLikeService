@@ -1,21 +1,15 @@
 package nel.marco.type;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.Optional;
 
 
-    /*
-
-    last know spec
-    ZAR - KWS: 6.10
-    ZAR - MWK: 42.50
-     */
-
-
 public enum Country {
 
-
+    //Ideally the currency will be stored in database or properties file so that it can be dynamically updated
+    //HARD CODED CURRENCY IS BAD IDEA!!!
     KENYA("KES", 6.10),
     MALAWI("MWK", 42.50);
 
@@ -48,6 +42,7 @@ public enum Country {
     }
 
     public static BigDecimal convertAmount(BigDecimal randAmount, Country country) {
-        return randAmount.multiply(country.currenyAmount);
+        //Added the setScale so it defaults to x.00 points and not x.0000
+        return randAmount.multiply(country.currenyAmount).setScale(2, RoundingMode.FLOOR);
     }
 }
