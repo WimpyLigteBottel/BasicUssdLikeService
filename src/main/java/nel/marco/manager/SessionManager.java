@@ -56,5 +56,7 @@ public class SessionManager {
         return session;
     }
 
-
+    public void clearSession(String sessionId) {
+        usercache.remove(sessionId);
+    }
 }

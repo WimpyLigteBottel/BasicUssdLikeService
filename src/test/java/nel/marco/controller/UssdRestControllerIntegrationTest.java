@@ -1,7 +1,8 @@
 package nel.marco.controller;
 
 import nel.marco.manager.SessionManager;
-import nel.marco.manager.SessionStepManager;
+import nel.marco.manager.StepInputValidator;
+import nel.marco.manager.StepManager;
 import nel.marco.model.Response;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,7 +20,8 @@ public class UssdRestControllerIntegrationTest {
         MockitoAnnotations.openMocks(this);
 
         SessionManager sessionManager = new SessionManager();
-        SessionStepManager sessionStepManager = new SessionStepManager(sessionManager);
+        StepInputValidator stepInputValidator = new StepInputValidator();
+        StepManager sessionStepManager = new StepManager(sessionManager, stepInputValidator);
 
         ussdRestController = new UssdRestController(sessionManager, sessionStepManager);
     }
@@ -77,7 +79,7 @@ public class UssdRestControllerIntegrationTest {
 
 
         //Don't like making referencing messages directly like this but its for testing purposes here because its makes actual brittle
-        assertThat(actual.getMessage()).isEqualTo("Please enter the person cellphone number?");
+        assertThat(actual.getMessage()).isEqualTo("Please enter the person cellphone number?\n Example: 0123456789");
         assertThat(actual.getSessionId()).isEqualTo(s);
 
     }
@@ -111,6 +113,47 @@ public class UssdRestControllerIntegrationTest {
 
         //Don't like making referencing messages directly like this but its for testing purposes here because its makes actual brittle
         assertThat(actual.getMessage()).isEqualTo("Thank you for using XYZ company!");
+        assertThat(actual.getSessionId()).isEqualTo(s);
+
+    }
+
+
+    @Test
+    public void ussdRequest_completeFlow_expectSessionToBeClearedAndStartFromScratch() {
+
+        String s = ussdRestController.requestSessionId();
+        ussdRestController.ussdRequest(s, "actual", "");
+        ussdRestController.ussdRequest(s, "actual", "1");
+        ussdRestController.ussdRequest(s, "actual", "100");
+        ussdRestController.ussdRequest(s, "actual", "0711413348");
+        ussdRestController.ussdRequest(s, "actual", "1");
+
+        Response actual = ussdRestController.ussdRequest(s, "actual", "1");
+
+
+        //Don't like making referencing messages directly like this but its for testing purposes here because its makes actual brittle
+        assertThat(actual.getMessage()).isEqualTo("Welcome! Where would you like to send your money today!\n 1. Kenya \n 2.Malawi");
+        assertThat(actual.getSessionId()).isEqualTo(s);
+
+    }
+
+
+    @Test
+    public void ussdRequest_invalidInputAtStep1_expectPreviousScreen() {
+
+        String s = ussdRestController.requestSessionId();
+        Response actual = ussdRestController.ussdRequest(s, "actual", "");
+
+        //Don't like making referencing messages directly like this but its for testing purposes here because its makes actual brittle
+        assertThat(actual.getMessage()).isEqualTo("Welcome! Where would you like to send your money today!\n 1. Kenya \n 2.Malawi");
+        assertThat(actual.getSessionId()).isEqualTo(s);
+
+
+        ussdRestController.ussdRequest(s, "actual", "99");
+
+
+        //Don't like making referencing messages directly like this but its for testing purposes here because its makes actual brittle
+        assertThat(actual.getMessage()).isEqualTo("Welcome! Where would you like to send your money today!\n 1. Kenya \n 2.Malawi");
         assertThat(actual.getSessionId()).isEqualTo(s);
 
     }

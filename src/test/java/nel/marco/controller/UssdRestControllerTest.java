@@ -1,7 +1,7 @@
 package nel.marco.controller;
 
 import nel.marco.manager.SessionManager;
-import nel.marco.manager.SessionStepManager;
+import nel.marco.manager.StepManager;
 import nel.marco.model.Session;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,7 +21,7 @@ public class UssdRestControllerTest {
     @Mock
     SessionManager sessionManager;
     @Mock
-    SessionStepManager sessionStepManager;
+    StepManager sessionStepManager;
 
     @Before
     public void setUp() throws Exception {

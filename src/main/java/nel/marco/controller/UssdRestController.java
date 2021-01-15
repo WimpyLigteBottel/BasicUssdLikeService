@@ -2,7 +2,7 @@ package nel.marco.controller;
 
 
 import nel.marco.manager.SessionManager;
-import nel.marco.manager.SessionStepManager;
+import nel.marco.manager.StepManager;
 import nel.marco.model.Response;
 import nel.marco.model.Session;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,9 +17,9 @@ import java.util.UUID;
 public class UssdRestController {
 
     private SessionManager sessionManager;
-    private SessionStepManager sessionStepManager;
+    private StepManager sessionStepManager;
 
-    public UssdRestController(SessionManager sessionManager, SessionStepManager sessionStepManager) {
+    public UssdRestController(SessionManager sessionManager, StepManager sessionStepManager) {
         this.sessionManager = sessionManager;
         this.sessionStepManager = sessionStepManager;
     }
@@ -40,10 +40,9 @@ public class UssdRestController {
                                 @RequestParam(required = true) String msisdn,
                                 @RequestParam(required = false, defaultValue = "") String userEntry) {
 
-        boolean isInitialEntry = userEntry.equalsIgnoreCase("");
         boolean hasNoSession = sessionManager.getSessionInfo(sessionId).isEmpty();
 
-        if (isInitialEntry && hasNoSession) {
+        if (hasNoSession) {
             return initialEntry(sessionId, msisdn);
         }
 

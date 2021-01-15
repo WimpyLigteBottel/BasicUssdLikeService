@@ -11,12 +11,14 @@ import java.util.List;
 import java.util.Optional;
 
 @Component
-public class SessionStepManager {
+public class StepManager {
 
-    SessionManager sessionManager;
+    private final SessionManager sessionManager;
+    private final StepInputValidator stepInputValidator;
 
-    public SessionStepManager(SessionManager sessionManager) {
+    public StepManager(SessionManager sessionManager, StepInputValidator stepInputValidator) {
         this.sessionManager = sessionManager;
+        this.stepInputValidator = stepInputValidator;
     }
 
     /*
@@ -29,16 +31,45 @@ public class SessionStepManager {
      */
 
 
-    public int determineCurrentStep(List<Session> session) {
+    public int determineCurrentStep(List<Session> sessions) {
 
-        if (session.isEmpty()) {
+        if (sessions.isEmpty()) {
             return 1;
         }
 
+        switch (sessions.size()) {
+            case 2:
+                if (stepInputValidator.isStep1Valid(sessions)) {
+                    // TODO: Could maybe add error screen if requested explaining to re enter input. But screen size is limited
+                    return 2;
+                }
+                return 1;
+            case 3:
+                if (stepInputValidator.isStep2Valid(sessions)) {
+                    // TODO: Could maybe add error screen if requested explaining to re enter input. But screen size is limited
+                    return 3;
+                }
+
+                return 2;
+            case 4:
+                if (stepInputValidator.isStep3Valid(sessions)) {
+                    // TODO: Could maybe add error screen if requested explaining to re enter input. But screen size is limited
+                    return 4;
+                }
+
+                return 3;
+            case 5:
+                if (stepInputValidator.isStep4Valid(sessions)) {
+                    // TODO: Could maybe add error screen if requested explaining to re enter input. But screen size is limited
+                    return 5;
+                }
+
+                return 4;
+        }
 
 
-        //TODO:Add logic based on the session information
-        return session.size();
+        //TODO:Add logic based on the sessions information
+        return sessions.size();
     }
 
 
@@ -62,9 +93,6 @@ public class SessionStepManager {
 
 
             case 2:
-
-                //TODO: entry should have been validated earlier
-
                 switch (session.getUserEntry().get()) {
                     case "1":
                         session.setUserEntry(Country.values()[0].toString());
@@ -88,7 +116,7 @@ public class SessionStepManager {
 
             case 3:
 
-                message = "Please enter the person cellphone number?";
+                message = "Please enter the person cellphone number?\n Example: 0123456789";
                 message = String.format(message, session.getUserEntry().get()); // optional should always be checked if its present or not. This should be check in validation step
 
                 //TODO: can consider using template for options or for more flows. I decided to keep it simple
@@ -126,6 +154,10 @@ public class SessionStepManager {
             case 5:
 
                 message = "Thank you for using XYZ company!";
+
+                //TODO: execute the payment but i feel like this is extra
+
+                sessionManager.clearSession(session.getSessionId());
 
                 //TODO: can consider using template for options or for more flows. I decided to keep it simple
                 return new Response(session.getSessionId(), message);

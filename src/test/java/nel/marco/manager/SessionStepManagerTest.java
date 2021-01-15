@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
@@ -21,13 +20,16 @@ public class SessionStepManagerTest {
     @Mock
     SessionManager sessionManager;
 
-    SessionStepManager sessionStepManager;
+    @Mock
+    StepInputValidator stepInputValidator;
+
+    StepManager sessionStepManager;
 
     @Before
     public void setUp() throws Exception {
 
         MockitoAnnotations.openMocks(this);
-        sessionStepManager = new SessionStepManager(sessionManager);
+        sessionStepManager = new StepManager(sessionManager, stepInputValidator);
     }
 
     @Test
@@ -93,7 +95,7 @@ public class SessionStepManagerTest {
         Session session2 = new Session("test", "session2", "Kenya");
         Session session3 = new Session("test", "session3", "100");
 
-        when(sessionManager.getSessionInfo(anyString())).thenReturn(List.of(session1,session2,session3));
+        when(sessionManager.getSessionInfo(anyString())).thenReturn(List.of(session1, session2, session3));
 
         Response actual = sessionStepManager.handleStep(3, session3);
 
