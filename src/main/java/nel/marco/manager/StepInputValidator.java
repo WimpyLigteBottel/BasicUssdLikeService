@@ -80,7 +80,8 @@ public class StepInputValidator {
         }
 
         //Below is crude way of validating the number, could always improve this if required
-        return step3.getUserEntry().get().matches("[0-9]{10}");
+        //Also one should not be able to pay yourself
+        return step3.getUserEntry().get().matches("[0-9]{10}") && !step3.getUserEntry().get().equalsIgnoreCase(step3.getMsisdn());
     }
 
 
