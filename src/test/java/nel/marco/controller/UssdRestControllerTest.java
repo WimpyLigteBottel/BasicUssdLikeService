@@ -9,7 +9,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -21,6 +21,7 @@ public class UssdRestControllerTest {
 
     @Mock
     SessionManager sessionManager;
+
     @Mock
     StepManager sessionStepManager;
 
@@ -32,18 +33,25 @@ public class UssdRestControllerTest {
 
     @Test
     public void ussdRequest_initialEntry_expectMethodsToBeCalled() {
-        when(sessionManager.getLatestSession(anyString())).thenReturn(new Session("asd", "asd"));
-        when(sessionManager.getSessionInfo(anyString())).thenReturn(new ArrayList<>());
 
         ussdRestController.ussdRequest(new Request("asd", "asd", ""));
 
 
-        verify(sessionManager, times(1)).getSessionInfo(anyString());
-        verify(sessionStepManager, times(1)).determineCurrentStep(any());
         verify(sessionManager, times(1)).createSession(anyString(), anyString());
 
-        verify(sessionManager, times(1)).getLatestSession(anyString());
-        verify(sessionStepManager, times(1)).handleStep(anyInt(), any());
+        verify(sessionStepManager, times(1)).handleStep(anyString());
+    }
+
+    @Test
+    public void ussdRequest_secondSession_expectMethodsToBeCalled() {
+
+        when(sessionManager.getSessionInfo(anyString())).thenReturn(List.of(new Session("asd","asd")));
+
+        ussdRestController.ussdRequest(new Request("asd", "asd", "1"));
+
+
+        verify(sessionManager, times(1)).addSession(anyString(), anyString(), anyString());
+        verify(sessionStepManager, times(1)).handleStep(anyString());
     }
 
 

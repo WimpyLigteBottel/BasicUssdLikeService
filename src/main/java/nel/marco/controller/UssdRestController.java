@@ -5,11 +5,11 @@ import nel.marco.manager.SessionManager;
 import nel.marco.manager.StepManager;
 import nel.marco.model.Request;
 import nel.marco.model.Response;
-import nel.marco.model.Session;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -29,10 +29,13 @@ public class UssdRestController {
         boolean hasNoSession = sessionManager.getSessionInfo(request.getSessionId()).isEmpty();
 
         if (hasNoSession) {
-            return initialEntry(request);
+            sessionManager.createSession(request.getSessionId(), request.getMsisdn());
+        } else {
+            sessionManager.addSession(request.getSessionId(), request.getMsisdn(), request.getUserEntry());
         }
 
-        return determineSession(request);
+
+        return sessionStepManager.handleStep(request.getSessionId());
     }
 
 
@@ -43,22 +46,4 @@ public class UssdRestController {
     }
 
 
-    private Response initialEntry(Request request) {
-        int currentStep = sessionStepManager.determineCurrentStep(new ArrayList<>());
-        sessionManager.createSession(request.getSessionId(), request.getMsisdn());
-        Session latestSession = sessionManager.getLatestSession(request.getSessionId());
-
-        return sessionStepManager.handleStep(currentStep, latestSession);
-
-    }
-
-    private Response determineSession(Request request) {
-        sessionManager.addSession(request.getSessionId(), request.getMsisdn(), request.getUserEntry());
-        List<Session> sessionInfo = sessionManager.getSessionInfo(request.getSessionId());
-
-        int currentStep = sessionStepManager.determineCurrentStep(sessionInfo);
-        Session latestSession = sessionManager.getLatestSession(sessionInfo);
-
-        return sessionStepManager.handleStep(currentStep, latestSession);
-    }
 }

@@ -23,16 +23,6 @@ public class StepManager {
         this.paymentManager = paymentManager;
     }
 
-    /*
-    This is the basic manager of the users session, and where the user lies at what step.
-
-    Example:
-    step == 0
-
-    Means this is the entry step of where the user is coming
-     */
-
-
     public int determineCurrentStep(List<Session> sessions) {
 
         if (sessions.isEmpty()) {
@@ -43,10 +33,10 @@ public class StepManager {
 
 
         switch (sessions.size()) {
+            case 1:
+                return 1;
             case 2:
                 if (stepInputValidator.isStep1Valid(sessions)) {
-
-                    // TODO: Could maybe add error screen if requested explaining to re enter input. But screen size is limited
                     return 2;
                 }
 
@@ -54,7 +44,6 @@ public class StepManager {
                 return 1;
             case 3:
                 if (stepInputValidator.isStep2Valid(sessions)) {
-                    // TODO: Could maybe add error screen if requested explaining to re enter input. But screen size is limited
                     return 3;
                 }
 
@@ -62,7 +51,6 @@ public class StepManager {
                 return 2;
             case 4:
                 if (stepInputValidator.isStep3Valid(sessions)) {
-                    // TODO: Could maybe add error screen if requested explaining to re enter input. But screen size is limited
                     return 4;
                 }
 
@@ -70,22 +58,21 @@ public class StepManager {
                 return 3;
             case 5:
                 if (stepInputValidator.isStep4Valid(sessions)) {
-                    // TODO: Could maybe add error screen if requested explaining to re enter input. But screen size is limited
                     return 5;
                 }
-
                 sessionManager.removeSession(sessionId, 4);
                 return 4;
+            default:
+                throw new RuntimeException("This should not have happened");
         }
 
-
-        //TODO:Add logic based on the sessions information
-        return sessions.size();
     }
 
 
-    //
-    public Response handleStep(int stepNumber, Session session) {
+    public Response handleStep(String sessionId) {
+
+        int stepNumber = determineCurrentStep(sessionManager.getSessionInfo(sessionId));
+        Session session = sessionManager.getLatestSession(sessionId);
 
         String message;
         String additionalOptions;
@@ -93,36 +80,22 @@ public class StepManager {
         switch (stepNumber) {
             case 1:
 
-                //TODO: format the code here slightly better
+                /*
+                TODO: find a better way of display screens and adding options
+                 */
                 message = "Welcome! Where would you like to send your money today!\n %s";
                 additionalOptions = "1. Kenya \n 2.Malawi";
                 message = String.format(message, additionalOptions);
-
-                //TODO: can consider using template for options or for more flows. I decided to keep it simple
 
                 return new Response(session.getSessionId(), message);
 
 
             case 2:
-                switch (session.getUserEntry().get()) {
-                    case "1":
-                        session.setUserEntry(Country.values()[0].toString());
-                        break;
-                    case "2":
-                        session.setUserEntry(Country.values()[1].toString());
-                        break;
-                    default:
-
-                        //Additional feature in case the user types out the country and not use the number provided
-                        session.setUserEntry(Country.parseValue(session.getUserEntry().get()).toString());
-                        break;
-                }
-
+                updateCountryOption(session);
 
                 message = "How much money(in Rands) would like to send to %s?";
                 message = String.format(message, session.getUserEntry().get()); // optional should always be checked if its present or not. This should be check in validation step
 
-                //TODO: can consider using template for options or for more flows. I decided to keep it simple
                 return new Response(session.getSessionId(), message);
 
             case 3:
@@ -130,7 +103,6 @@ public class StepManager {
                 message = "Please enter the person cellphone number?\n Example: 0123456789";
                 message = String.format(message, session.getUserEntry().get()); // optional should always be checked if its present or not. This should be check in validation step
 
-                //TODO: can consider using template for options or for more flows. I decided to keep it simple
                 return new Response(session.getSessionId(), message);
 
 
@@ -139,26 +111,21 @@ public class StepManager {
                 Optional<String> country = sessionManager.getSessionInfo(session.getSessionId()).get(1).getUserEntry();
                 Optional<String> moneyAmount = sessionManager.getSessionInfo(session.getSessionId()).get(2).getUserEntry();
 
-                BigDecimal actualAmount;
-                String currencyCode;
-                if (country.isPresent() && moneyAmount.isPresent()) {
-
-                    BigDecimal randAmount = BigDecimal.valueOf(Double.parseDouble(moneyAmount.get()));
-                    Country countrySelected = Country.parseValue(country.get());
-
-
-                    currencyCode = countrySelected.getCurrency();
-                    actualAmount = Country.convertAmount(randAmount, countrySelected).setScale(2, RoundingMode.FLOOR);
-                } else {
-                    //TODO: add logging with the session details
+                if (!country.isPresent() || !moneyAmount.isPresent()) {
                     throw new RuntimeException("Unable to find correct values in step 3]");
                 }
+
+                BigDecimal randAmount = BigDecimal.valueOf(Double.parseDouble(moneyAmount.get()));
+                Country countrySelected = Country.parseValue(country.get());
+
+
+                String currencyCode = countrySelected.getCurrency();
+                BigDecimal actualAmount = Country.convertAmount(randAmount, countrySelected).setScale(2, RoundingMode.FLOOR);
 
 
                 message = "The person your sending to will receive: %s %s. \n 1. Ok";
                 message = String.format(message, actualAmount.toPlainString(), currencyCode); // optional should always be checked if its present or not. This should be check in validation step
 
-                //TODO: can consider using template for options or for more flows. I decided to keep it simple
                 return new Response(session.getSessionId(), message);
 
 
@@ -174,7 +141,6 @@ public class StepManager {
                     sessionManager.clearSession(session.getSessionId());
                 }
 
-                //TODO: can consider using template for options or for more flows. I decided to keep it simple
                 return new Response(session.getSessionId(), message);
 
             default:
@@ -183,6 +149,34 @@ public class StepManager {
                 throw new RuntimeException(String.format("Invalid step number [stepNumber=%d;sessionId=%s]", stepNumber, session.getSessionId()));
         }
 
+    }
+
+    /*
+        Updates the country option the user has chosen
+        Example:
+
+        1 == Kenya
+        2 == Malawi
+     */
+    private void updateCountryOption(Session session) {
+
+
+        if (!session.getUserEntry().isPresent()) {
+            return;
+        }
+
+        switch (session.getUserEntry().get()) {
+            case "1":
+                session.setUserEntry(Country.values()[0].toString());
+                break;
+            case "2":
+                session.setUserEntry(Country.values()[1].toString());
+                break;
+            default:
+                //Additional feature in case the user types out the country and not use the number provided
+                session.setUserEntry(Country.parseValue(session.getUserEntry().get()).toString());
+                break;
+        }
     }
 
 
