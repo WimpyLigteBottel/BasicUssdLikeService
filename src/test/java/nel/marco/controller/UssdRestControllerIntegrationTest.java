@@ -6,8 +6,8 @@ import nel.marco.manager.StepInputValidator;
 import nel.marco.manager.StepManager;
 import nel.marco.model.Request;
 import nel.marco.model.Response;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.MockitoAnnotations;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -17,7 +17,7 @@ public class UssdRestControllerIntegrationTest {
     UssdRestController ussdRestController;
 
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         MockitoAnnotations.openMocks(this);
 

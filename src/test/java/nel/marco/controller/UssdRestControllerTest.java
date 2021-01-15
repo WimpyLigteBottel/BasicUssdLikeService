@@ -4,8 +4,8 @@ import nel.marco.manager.SessionManager;
 import nel.marco.manager.StepManager;
 import nel.marco.model.Request;
 import nel.marco.model.Session;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -25,7 +25,7 @@ public class UssdRestControllerTest {
     @Mock
     StepManager sessionStepManager;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         MockitoAnnotations.openMocks(this);
         ussdRestController = new UssdRestController(sessionManager, sessionStepManager);
