@@ -1,5 +1,6 @@
 package nel.marco.controller;
 
+import nel.marco.manager.PaymentManager;
 import nel.marco.manager.SessionManager;
 import nel.marco.manager.StepInputValidator;
 import nel.marco.manager.StepManager;
@@ -21,7 +22,7 @@ public class UssdRestControllerIntegrationTest {
 
         SessionManager sessionManager = new SessionManager();
         StepInputValidator stepInputValidator = new StepInputValidator();
-        StepManager sessionStepManager = new StepManager(sessionManager, stepInputValidator);
+        StepManager sessionStepManager = new StepManager(sessionManager, stepInputValidator, new PaymentManager());
 
         ussdRestController = new UssdRestController(sessionManager, sessionStepManager);
     }

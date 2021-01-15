@@ -23,13 +23,16 @@ public class SessionStepManagerTest {
     @Mock
     StepInputValidator stepInputValidator;
 
+    @Mock
+    PaymentManager paymentManager;
+
     StepManager sessionStepManager;
 
     @Before
     public void setUp() throws Exception {
 
         MockitoAnnotations.openMocks(this);
-        sessionStepManager = new StepManager(sessionManager, stepInputValidator);
+        sessionStepManager = new StepManager(sessionManager, stepInputValidator, paymentManager);
     }
 
     @Test

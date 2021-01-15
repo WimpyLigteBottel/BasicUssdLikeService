@@ -15,10 +15,12 @@ public class StepManager {
 
     private final SessionManager sessionManager;
     private final StepInputValidator stepInputValidator;
+    private final PaymentManager paymentManager;
 
-    public StepManager(SessionManager sessionManager, StepInputValidator stepInputValidator) {
+    public StepManager(SessionManager sessionManager, StepInputValidator stepInputValidator, PaymentManager paymentManager) {
         this.sessionManager = sessionManager;
         this.stepInputValidator = stepInputValidator;
+        this.paymentManager = paymentManager;
     }
 
     /*
@@ -37,12 +39,18 @@ public class StepManager {
             return 1;
         }
 
+        String sessionId = sessions.get(0).getSessionId();
+
+
         switch (sessions.size()) {
             case 2:
                 if (stepInputValidator.isStep1Valid(sessions)) {
+
                     // TODO: Could maybe add error screen if requested explaining to re enter input. But screen size is limited
                     return 2;
                 }
+
+                sessionManager.removeSession(sessionId, 1);
                 return 1;
             case 3:
                 if (stepInputValidator.isStep2Valid(sessions)) {
@@ -50,6 +58,7 @@ public class StepManager {
                     return 3;
                 }
 
+                sessionManager.removeSession(sessionId, 2);
                 return 2;
             case 4:
                 if (stepInputValidator.isStep3Valid(sessions)) {
@@ -57,6 +66,7 @@ public class StepManager {
                     return 4;
                 }
 
+                sessionManager.removeSession(sessionId, 3);
                 return 3;
             case 5:
                 if (stepInputValidator.isStep4Valid(sessions)) {
@@ -64,6 +74,7 @@ public class StepManager {
                     return 5;
                 }
 
+                sessionManager.removeSession(sessionId, 4);
                 return 4;
         }
 
@@ -155,14 +166,20 @@ public class StepManager {
 
                 message = "Thank you for using XYZ company!";
 
-                //TODO: execute the payment but i feel like this is extra
-
-                sessionManager.clearSession(session.getSessionId());
+                try {
+                    paymentManager.payClient(sessionManager.getSessionInfo(session.getSessionId()));
+                } catch (Exception e) {
+                    message = "Your payment failed, please follow up with our agents (0123456789)";
+                } finally {
+                    sessionManager.clearSession(session.getSessionId());
+                }
 
                 //TODO: can consider using template for options or for more flows. I decided to keep it simple
                 return new Response(session.getSessionId(), message);
 
             default:
+                //clears the session in cache so that client can restart
+                sessionManager.clearSession(session.getSessionId());
                 throw new RuntimeException(String.format("Invalid step number [stepNumber=%d;sessionId=%s]", stepNumber, session.getSessionId()));
         }
 

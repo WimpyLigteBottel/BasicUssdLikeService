@@ -51,12 +51,16 @@ public class SessionManager {
         //TODO: check that the session does not already exist in the cache
         //TODO: handle logic if its already in the cache
         Session session = new Session(sessionId, msisdn);
-        usercache.put(sessionId, List.of(session));
+        usercache.put(sessionId, new ArrayList<>(List.of(session)));
 
         return session;
     }
 
     public void clearSession(String sessionId) {
         usercache.remove(sessionId);
+    }
+
+    public void removeSession(String sessionId, int i) {
+        usercache.get(sessionId).remove(i);
     }
 }
