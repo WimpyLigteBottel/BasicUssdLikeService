@@ -1,7 +1,7 @@
 package nel.marco.controller;
 
 import nel.marco.manager.SessionManager;
-import nel.marco.manager.StepManager;
+import nel.marco.manager.menu.MenuManager;
 import nel.marco.model.Request;
 import nel.marco.model.Session;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,12 +24,12 @@ public class UssdRestControllerTest {
     SessionManager sessionManager;
 
     @Mock
-    StepManager sessionStepManager;
+    MenuManager menuManager;
 
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        ussdRestController = new UssdRestController(sessionManager, sessionStepManager);
+        ussdRestController = new UssdRestController(sessionManager, menuManager);
     }
 
     @Test
@@ -39,7 +39,7 @@ public class UssdRestControllerTest {
 
 
         verify(sessionManager, times(1)).createSession(anyString(), anyString());
-        verify(sessionStepManager, times(1)).handleStep(anyString());
+        verify(menuManager, times(1)).handleStep(anyString());
     }
 
     @Test
@@ -53,7 +53,7 @@ public class UssdRestControllerTest {
         ussdRestController.ussdRequest(new Request("asd", "asd", "1"));
 
         verify(sessionManager, times(1)).addSession(anyString(), anyString(), anyString());
-        verify(sessionStepManager, times(1)).handleStep(anyString());
+        verify(menuManager, times(1)).handleStep(anyString());
     }
 
 

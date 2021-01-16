@@ -2,8 +2,8 @@ package nel.marco.controller;
 
 import nel.marco.manager.PaymentManager;
 import nel.marco.manager.SessionManager;
-import nel.marco.manager.StepInputValidator;
-import nel.marco.manager.StepManager;
+import nel.marco.manager.menu.MenuInputValidator;
+import nel.marco.manager.menu.MenuManager;
 import nel.marco.model.Request;
 import nel.marco.model.Response;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,10 +22,10 @@ public class UssdRestControllerIntegrationTest {
         MockitoAnnotations.openMocks(this);
 
         SessionManager sessionManager = new SessionManager();
-        StepInputValidator stepInputValidator = new StepInputValidator();
-        StepManager sessionStepManager = new StepManager(sessionManager, stepInputValidator, new PaymentManager());
+        MenuInputValidator menuInputValidator = new MenuInputValidator();
+        MenuManager menuManager = new MenuManager(sessionManager, menuInputValidator, new PaymentManager());
 
-        ussdRestController = new UssdRestController(sessionManager, sessionStepManager);
+        ussdRestController = new UssdRestController(sessionManager, menuManager);
     }
 
     @Test

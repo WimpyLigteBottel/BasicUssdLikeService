@@ -3,7 +3,7 @@ package nel.marco.controller;
 
 import com.google.gson.Gson;
 import nel.marco.manager.SessionManager;
-import nel.marco.manager.StepManager;
+import nel.marco.manager.menu.MenuManager;
 import nel.marco.model.Request;
 import nel.marco.model.Response;
 import org.slf4j.Logger;
@@ -22,9 +22,9 @@ public class UssdRestController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private SessionManager sessionManager;
-    private StepManager sessionStepManager;
+    private MenuManager sessionStepManager;
 
-    public UssdRestController(SessionManager sessionManager, StepManager sessionStepManager) {
+    public UssdRestController(SessionManager sessionManager, MenuManager sessionStepManager) {
         this.sessionManager = sessionManager;
         this.sessionStepManager = sessionStepManager;
     }

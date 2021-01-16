@@ -1,5 +1,7 @@
-package nel.marco.manager;
+package nel.marco.manager.menu;
 
+import nel.marco.manager.PaymentManager;
+import nel.marco.manager.SessionManager;
 import nel.marco.model.Response;
 import nel.marco.model.Session;
 import nel.marco.type.Country;
@@ -12,16 +14,16 @@ import java.util.List;
 import java.util.Optional;
 
 @Component
-public class StepManager {
+public class MenuManager {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 
     private final SessionManager sessionManager;
-    private final StepInputValidator stepInputValidator;
+    private final MenuInputValidator stepInputValidator;
     private final PaymentManager paymentManager;
 
-    public StepManager(SessionManager sessionManager, StepInputValidator stepInputValidator, PaymentManager paymentManager) {
+    public MenuManager(SessionManager sessionManager, MenuInputValidator stepInputValidator, PaymentManager paymentManager) {
         this.sessionManager = sessionManager;
         this.stepInputValidator = stepInputValidator;
         this.paymentManager = paymentManager;

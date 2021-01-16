@@ -1,4 +1,4 @@
-package nel.marco.manager;
+package nel.marco.manager.menu;
 
 import com.google.gson.Gson;
 import nel.marco.model.Session;
@@ -12,7 +12,7 @@ import java.util.List;
 //The goal of this class is to make sure each input is valid for future steps and checking that everything is valid input
 
 @Component
-public class StepInputValidator {
+public class MenuInputValidator {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 

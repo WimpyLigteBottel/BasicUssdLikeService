@@ -20,7 +20,7 @@ public enum Country {
     Country(String currency, double currencyAmount) {
         this.currency = currency;
         //When working with amounts you always want to work with BigDecimal do to floating points in double
-        this.currenyAmount = BigDecimal.valueOf(currencyAmount);
+        this.currenyAmount = BigDecimal.valueOf(currencyAmount).setScale(2,RoundingMode.FLOOR);
     }
 
     public String getCurrency() {

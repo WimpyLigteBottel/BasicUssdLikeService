@@ -2,6 +2,16 @@
 This is basic ussd like service to simulate how the flow would work
 
 
+#Why does this project seem incomplete?
+The idea of this is just give basic idea of how ussd system would flow.
+
+#Why so many comments in the code?
+Ideally I would not leave this comments in the code if this were to go to production. 
+The reason why I left them is to communicate certain things I thought about. Or where
+changes should be implemented.
+
+
+
 #How to run the project
 You will need the following programs install on your system.
 
