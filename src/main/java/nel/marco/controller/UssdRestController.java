@@ -22,11 +22,11 @@ public class UssdRestController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private SessionManager sessionManager;
-    private MenuManager sessionStepManager;
+    private MenuManager menuManager;
 
-    public UssdRestController(SessionManager sessionManager, MenuManager sessionStepManager) {
+    public UssdRestController(SessionManager sessionManager, MenuManager menuManager) {
         this.sessionManager = sessionManager;
-        this.sessionStepManager = sessionStepManager;
+        this.menuManager = menuManager;
     }
 
     @PostMapping("/ussd")
@@ -41,7 +41,7 @@ public class UssdRestController {
         }
 
         try {
-            return sessionStepManager.handleStep(request.getSessionId());
+            return menuManager.handleStep(request.getSessionId());
         } catch (Exception e) {
             String sessionJson = new Gson().toJson(sessionManager.getSessionInfo(request.getSessionId()));
             logger.error("ussdRequest failed [sessionId={};sessionJson={}]", request.getSessionId(), sessionJson);

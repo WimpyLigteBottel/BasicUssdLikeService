@@ -20,12 +20,12 @@ public class MenuManager {
 
 
     private final SessionManager sessionManager;
-    private final MenuInputValidator stepInputValidator;
+    private final MenuInputValidator menuInputValidator;
     private final PaymentManager paymentManager;
 
-    public MenuManager(SessionManager sessionManager, MenuInputValidator stepInputValidator, PaymentManager paymentManager) {
+    public MenuManager(SessionManager sessionManager, MenuInputValidator menuInputValidator, PaymentManager paymentManager) {
         this.sessionManager = sessionManager;
-        this.stepInputValidator = stepInputValidator;
+        this.menuInputValidator = menuInputValidator;
         this.paymentManager = paymentManager;
     }
 
@@ -118,27 +118,27 @@ public class MenuManager {
             case 1:
                 return 1;
             case 2:
-                if (stepInputValidator.isStep1Valid(sessions)) {
+                if (menuInputValidator.isStep1Valid(sessions)) {
                     return 2;
                 }
                 sessionManager.removeSession(sessionId, 1);
                 return 1;
             case 3:
-                if (stepInputValidator.isStep2Valid(sessions)) {
+                if (menuInputValidator.isStep2Valid(sessions)) {
                     return 3;
                 }
 
                 sessionManager.removeSession(sessionId, 2);
                 return 2;
             case 4:
-                if (stepInputValidator.isStep3Valid(sessions)) {
+                if (menuInputValidator.isStep3Valid(sessions)) {
                     return 4;
                 }
 
                 sessionManager.removeSession(sessionId, 3);
                 return 3;
             case 5:
-                if (stepInputValidator.isStep4Valid(sessions)) {
+                if (menuInputValidator.isStep4Valid(sessions)) {
                     return 5;
                 }
                 sessionManager.removeSession(sessionId, 4);
