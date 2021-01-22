@@ -15,12 +15,12 @@ public enum Country {
 
 
     private final String currency;
-    private final BigDecimal currenyAmount;
+    private final BigDecimal currencyAmount;
 
     Country(String currency, double currencyAmount) {
         this.currency = currency;
         //When working with amounts you always want to work with BigDecimal do to floating points in double
-        this.currenyAmount = BigDecimal.valueOf(currencyAmount).setScale(2,RoundingMode.FLOOR);
+        this.currencyAmount = BigDecimal.valueOf(currencyAmount).setScale(2,RoundingMode.FLOOR);
     }
 
     public String getCurrency() {
@@ -43,6 +43,6 @@ public enum Country {
 
     public static BigDecimal convertAmount(BigDecimal randAmount, Country country) {
         //Added the setScale so it defaults to x.00 points and not x.0000
-        return randAmount.multiply(country.currenyAmount).setScale(2, RoundingMode.FLOOR);
+        return randAmount.multiply(country.currencyAmount).setScale(2, RoundingMode.FLOOR);
     }
 }
